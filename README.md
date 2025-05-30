@@ -4,12 +4,12 @@ Este repositorio contiene los archivos finales (`final_outputs`) y los scripts u
 
 ## 🧪 El proyecto
 
-Identificación de firmas glicano-relacionadas en colitis ulcerosa y cáncer colorrectal asociado mediante análisis transcriptómicos y validación in vivo
+Identificación de firmas glicano-relacionadas en colitis ulcerosa y cáncer colorrectal asociado mediante análisis transcriptómicos y posterior validación in vivo.
 
 ## 📂 Estructura del Repositorio
 
-├── final_outputs/ # Tablas finales del análisis (ej. genes diferencialmente expresados)
-├── scripts/ # Scripts en R utilizados en los análisis
+├── final_outputs/ # Tablas finales del análisis (ej. genes diferencialmente expresados)<br>
+├── scripts/ # Scripts en R utilizados en los análisis<br>
 ├── README.md # Este archivo
 
 
