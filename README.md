@@ -2,7 +2,7 @@
 
 Este repositorio contiene los archivos finales (`final_outputs`) y los scripts utilizados en el análisis de expresión genética diferencial y otros análisis transcriptómicos realizados para mi tesis de licenciatura en Biotecnología.
 
-##🧪 El proyecto
+## 🧪 El proyecto
 
 Identificación de firmas glicano-relacionadas en colitis ulcerosa y cáncer colorrectal asociado mediante análisis transcriptómicos y validación in vivo
 
