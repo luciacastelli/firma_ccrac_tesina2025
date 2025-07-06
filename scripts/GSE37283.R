@@ -233,21 +233,26 @@ qpdf::pdf_combine(input = pdfs[grepl("n_c_", pdfs)],
 qpdf::pdf_combine(input = pdfs[grepl("n_uc", pdfs)],
                   output = "output/GSE37283/gsea_plots/n_uc_combined.pdf")
 
-keep <- selection
-selection <- selection[grepl("^GOBP_", selection),]
-my_gsea <- n_c_gsea[rownames(n_c_gsea) %in% selection,]
-my_gsea <- my_gsea %>% mutate(NES_category = ifelse(NES > 0, "Positive", "Negative"))
-
+#keep <- selection
+#selection <- selection[grepl("^GOBP_", selection),]
+#my_gsea <- n_c_gsea[rownames(n_c_gsea) %in% selection,]
+uc_c_gsea$source <- ifelse(grepl("^GOBP_", rownames(uc_c_gsea)), "GOBP",
+                           ifelse(grepl("^GOCC_", rownames(uc_c_gsea)), "GOCC",
+                                  ifelse(grepl("^REACTOME_", rownames(uc_c_gsea)), "REACTOME", 
+                                         ifelse(grepl("^GOMF_", rownames(uc_c_gsea)), "GOMF", "HP"))))
+my_gsea <- uc_c_gsea %>% mutate(NES_category = ifelse(NES > 0, "Positivo", "Negativo"))
+my_gsea <- my_gsea[1:20,]
+my_gsea$comparison <- ""
 ggplot(my_gsea, aes(x = comparison, y = reorder(ID, -log10(p.adjust)))) +
   geom_point(aes(size = setSize, color = NES_category, alpha = -log10(p.adjust))) +
-  scale_color_manual(values = c("Positive" = "red", "Negative" = "blue")) +
-  labs(title = paste("GOBP", my_gsea$comparison), 
-       subtitle = paste("Geneset size range:", my_gsea$geneset_size),
+  scale_color_manual(values = c("Positivo" = "red", "Negativo" = "blue")) +
+  labs(title = "GSEA: colitis ulcerosa quiescente vs. control", 
        x = element_blank(),
-       y = "Pathway",
-       size = "Gene Set Size",
-       color = "NES Direction",
-       alpha = "-log10(p.adjust)") +
+       y = "Vía",
+       size = "Tamaño",
+       color = "Sentido NES",
+       alpha = "-log10(p-ajustado)") +
+  facet_wrap(~ my_gsea$source, nrow = 1) +
   theme_bw() +
   theme(plot.title = element_text(hjust = 1, size = 14, face = "bold"))
 

@@ -436,6 +436,28 @@ qpdf::pdf_combine(input = pdfs[grepl("d_c_", pdfs)],
 qpdf::pdf_combine(input = pdfs[grepl("d_uc_", pdfs)],
                   output = "output/GSE47908/gsea_plots/d_uc_combined.pdf")
 
+
+d_uc_gsea.g$source <- ifelse(grepl("^GOBP_", rownames(d_uc_gsea.g)), "GOBP",
+                            ifelse(grepl("^GOCC_", rownames(d_uc_gsea.g)), "GOCC",
+                                   ifelse(grepl("^REACTOME_", rownames(d_uc_gsea.g)), "REACTOME", 
+                                          ifelse(grepl("^GOMF_", rownames(d_uc_gsea.g)), "GOMF", "HP"))))
+my_gsea <- d_uc_gsea.g %>% mutate(NES_category = ifelse(NES > 0, "Positivo", "Negativo"))
+my_gsea <- my_gsea[!grepl("^HP_", rownames(my_gsea)),]
+my_gsea <- my_gsea[1:10,]
+my_gsea$comparison <- ""
+ggplot(my_gsea, aes(x = comparison, y = reorder(ID, -log10(p.adjust)))) +
+  geom_point(aes(size = setSize, color = NES_category, alpha = -log10(p.adjust))) +
+  scale_color_manual(values = c("Positivo" = "red", "Negativo" = "blue")) +
+  labs(title = "GSEA: displasia vs. CU-I (glicobiológico)", 
+       x = element_blank(),
+       y = "Vía",
+       size = "Tamaño",
+       color = "Sentido NES",
+       alpha = "-log10(p-ajustado)") +
+  facet_wrap(~ my_gsea$source, nrow = 1) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 1, size = 14, face = "bold"))
+
 # GSVA: pathway enrichment per sample: patient sub-populations ----
 # Format genesets for GSVA
 GO_BP <- c5_hs |> dplyr::filter(grepl("GOBP", gs_name))

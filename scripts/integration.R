@@ -87,6 +87,11 @@ bjerrum.pan_uc <- pan_uc_toptable
 load("~/projects/tesis/data/pancolitis/dys_pan_toptable.RData")
 bjerrum.dys_pan <- dys_pan_toptable
 
+#bjerrum.pan_uc.g <- bjerrum.pan_uc %>% dplyr::filter(row.names(bjerrum.pan_uc) %in% glycogenes2)
+#openxlsx::write.xlsx(list("all_genes" = bjerrum.pan_uc[,!colnames(bjerrum.pan_uc) %in% "rank"],
+#                          "all_glyco" = bjerrum.pan_uc.g[,!colnames(bjerrum.pan_uc.g) %in% "rank"]),
+#                     file = "~/projects/tesis/final_outputs/5-3-3-CCRAC_vs_CU/GSE47908-Pancolitis_CU-I.xlsx", rowNames = TRUE)
+
 # GSE73661 roman 
 arijs.uc_c <- read.xlsx(xlsxFile = "output/roman/uc_c_tables.xlsx", sheet = "all", rowNames = T)
 
@@ -1131,14 +1136,79 @@ g3 <- ggplot(gal4_ca_uc.df, aes(x = logFC, y = comparison, col = gse, label = pa
   geom_text_repel() + 
   theme_minimal()
 
-plot(gal4_plot)
-gal4_plot <- grid.arrange(g1, g2, g3, ncol = 1, top = "Differential expression of Gal4 across all cohorts")
-ggsave(plot = plot.r, filename = "quality.pdf", device = "pdf", dpi = 300,
-       height = 7, width = 12, path = "output/GSE37283/quality_plots")
+grid.arrange(g1, g2, g3, ncol = 1, top = "Differential expression of Gal4 across all cohorts")
 
-GSE3629.cac_sporadic <- read.xlsx(xlsxFile = "output/GSE3629/tables/cac_sporadic_tables.xlsx", sheet = "all_genes")
-colnames(GSE3629.cac_sporadic) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
-GSE3629.cac_sporadic.gal4 <- GSE3629.cac_sporadic[GSE3629.cac_sporadic$genes == "LGALS4",]
+# Donde está GAL12? ----
+# UC / C
+GSE47908.uc_c <- read.xlsx(xlsxFile = "output/GSE47908/tables/uc_c_tables.xlsx", sheet = "all_genes")
+GSE37283.uc_c <- read.xlsx(xlsxFile = "output/GSE37283/tables/uc_c_tables.xlsx", sheet = "all_genes")
+roman.uc_c <- read.xlsx(xlsxFile = "output/roman/uc_c_tables.xlsx", sheet = "all")
+colnames(GSE47908.uc_c) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+colnames(GSE37283.uc_c) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+colnames(roman.uc_c) <- c("genes", "logFC", "adjP")
+GSE47908.uc_c.gal4 <- GSE47908.uc_c[GSE47908.uc_c$genes == "LGALS12",]
+GSE37283.uc_c.gal4 <- GSE37283.uc_c[GSE37283.uc_c$genes == "LGALS12",]
+roman.uc_c.gal4 <- roman.uc_c[roman.uc_c$genes == "LGALS12",]
+
+# CAC/C
+GSE37283.n_c <- read.xlsx(xlsxFile = "output/GSE37283/tables/n_c_tables.xlsx", sheet = "all_genes")
+GSE47908.d_c <- read.xlsx(xlsxFile = "output/GSE47908/tables/d_c_tables.xlsx", sheet = "all_genes")
+colnames(GSE37283.n_c) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+colnames(GSE47908.d_c) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+GSE37283.n_c.gal4 <- GSE37283.n_c[GSE37283.n_c$genes == "LGALS12",]
+GSE47908.d_c.gal4 <- GSE47908.d_c[GSE47908.d_c$genes == "LGALS12",]
+
+# CAC/UC
+GSE3629.cac_uc <- read.xlsx(xlsxFile = "output/GSE3629/tables/cac_uc_tables.xlsx", sheet = "all_genes")
+GSE37283.n_uc <- read.xlsx(xlsxFile = "output/GSE37283/tables/n_uc_tables.xlsx", sheet = "all_genes")
+GSE47908.d_uc <- read.xlsx(xlsxFile = "output/GSE47908/tables/d_uc_tables.xlsx", sheet = "all_genes")
+colnames(GSE3629.cac_uc) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+colnames(GSE37283.n_uc) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+colnames(GSE47908.d_uc) <- c("genes", "logFC", "P", "adjP", "rank", "direction", "comparison")
+GSE3629.cac_uc.gal4 <- GSE3629.cac_uc[GSE3629.cac_uc$genes == "LGALS12",]
+GSE37283.n_uc.gal4 <- GSE37283.n_uc[GSE37283.n_uc$genes == "LGALS12",]
+GSE47908.d_uc.gal4 <- GSE47908.d_uc[GSE47908.d_uc$genes == "LGALS12",]
+
+# unir
+# roman.uc_c.gal4
+GSE47908.uc_c.gal4$gse <- "GSE47908"
+GSE37283.uc_c.gal4$gse <- "GSE37283"
+GSE37283.n_c.gal4$gse <- "GSE37283"
+GSE47908.d_c.gal4$gse <- "GSE47908"
+GSE3629.cac_uc.gal4$gse <- "GSE3629"
+GSE37283.n_uc.gal4$gse <- "GSE37283"
+GSE47908.d_uc.gal4$gse <- "GSE47908"
+
+gal4_uc_c.df <- rbind(GSE47908.uc_c.gal4, GSE37283.uc_c.gal4)
+gal4_ca_c.df <- rbind(GSE37283.n_c.gal4, GSE47908.d_c.gal4)
+gal4_ca_uc.df <- rbind(GSE37283.n_uc.gal4, GSE47908.d_uc.gal4, GSE3629.cac_uc.gal4)
+gal4_uc_c.df <- gal4_uc_c.df[, c(2,4,6,7,8)]
+gal4_ca_c.df <- gal4_ca_c.df[, c(2,4,6,7,8)]
+gal4_ca_uc.df <- gal4_ca_uc.df[, c(2,4,6,7,8)]
+
+g1 <- ggplot(gal4_uc_c.df, aes(x = logFC, y = comparison, col = gse, label = paste("p =", round(adjP, digits = 4)))) +
+  geom_pointrange(aes(xmin = min(logFC) - 1, xmax = max(logFC) + 1)) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour = "grey", linewidth = 1) +
+  scale_color_manual(values = c("GSE47908" = "cornflowerblue", "GSE37283" = "coral1")) +
+  geom_text_repel() + 
+  theme_minimal()
+
+g2 <- ggplot(gal4_ca_c.df, aes(x = logFC, y = comparison, col = gse, label = paste("p =", round(adjP, digits = 4)))) +
+  geom_pointrange(aes(xmin = min(logFC) - 1, xmax = max(logFC) + 1)) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour = "grey", linewidth = 1) +
+  scale_color_manual(values = c("GSE47908" = "cornflowerblue", "GSE37283" = "coral1")) +
+  geom_text_repel() + 
+  theme_minimal()
+
+g3 <- ggplot(gal4_ca_uc.df, aes(x = logFC, y = comparison, col = gse, label = paste("p =", round(adjP, digits = 4)))) +
+  geom_pointrange(aes(xmin = min(logFC) - 1, xmax = max(logFC) + 1)) +
+  geom_vline(xintercept = 0, linetype = "longdash", colour = "grey", linewidth = 1) +
+  scale_color_manual(values = c("GSE47908" = "cornflowerblue", "GSE37283" = "coral1", "GSE3629" = "aquamarine4")) +
+  geom_text_repel() + 
+  theme_minimal()
+
+grid.arrange(g1, g2, g3, ncol = 1, top = "Differential expression of Gal12 across all cohorts")
+
 
 # Analyze qpcr results ----
 qpcr_data <- read_csv("~/projects/tesis/data/raw/qpcr.csv") %>%
@@ -1158,6 +1228,103 @@ dunn_test(defa5, `Relative Quantity` ~ Group, p.adjust.method = "BH", detailed =
 lgals4 <- qpcr_data %>% filter(target == "Lgals4")
 ggboxplot(lgals4, x = "Group", y = "Relative Quantity", title = "Expresión de Lgals4", xlab = "Grupo", ylab = "Cantidad relativa")
 kruskal.test(`Relative Quantity` ~ Group, data = lgals4)
+
+# Gen 3: Lgals12
+lgals12 <- qpcr_data %>% filter(target == "Lgals12")
+ggboxplot(lgals12, x = "Group", y = "Relative Quantity", title = "Expresión de Lgals12", xlab = "Grupo", ylab = "Cantidad relativa")
+kruskal.test(`Relative Quantity` ~ Group, data = lgals12)
+
+# Gen 4: St3gal1
+st3gal1 <- qpcr_data %>% filter(target == "St3Gal1")
+ggboxplot(st3gal1, x = "Group", y = "Relative Quantity", title = "Expresión de St3gal1", xlab = "Grupo", ylab = "Cantidad relativa")
+kruskal.test(`Relative Quantity` ~ Group, data = st3gal1)
+
+data_resumida <- qpcr_data[,c(1, 3, 8)] %>%
+  group_by(target, Group) %>%
+  summarise(promedio = mean(`Relative Quantity`))
+
+data_resumida$promedio <- format(round(data_resumida$promedio, digits = 2), scientific = FALSE)
+
+# graficos para la tesis
+library(ggpubr)
+basesize <- 12
+# Gen 1: Defa5
+defa5 <- defa5 %>%
+  mutate(Group = factor(Group, levels = c("Control", "DSS", "AOM/DSS")))
+
+dunn_result <- defa5 %>% 
+  dunn_test(`Relative Quantity` ~ Group, p.adjust.method = "BH", detailed = F) %>%
+  add_xy_position(x = "Group") %>% 
+  mutate(p.adj.round = signif(p.adj, digits = 2))
+
+barras_defa5 <- ggplot(data = defa5, aes(x = Group, y = `Relative Quantity`)) +
+  geom_boxplot(aes(x = `Group`, y = `Relative Quantity`, fill = Group)) +
+  scale_fill_brewer(palette = "Set3") +
+  theme_classic(base_size = basesize) +
+  labs(title = "Expresión de Defa5", x = "Tratamiento", y = "Cantidad relativa", fill = "Tratamiento")+
+  theme(legend.position = "none") +
+  stat_compare_means(method = "kruskal.test") +
+  stat_pvalue_manual(dunn_result, label = "p.adj.round", tip.length = 0.01)
+
+# Gen 2: Lgals4
+lgals4 <- lgals4 %>%
+  mutate(Group = factor(Group, levels = c("Control", "DSS", "AOM/DSS")))
+
+dunn_result <- lgals4 %>% 
+  dunn_test(`Relative Quantity` ~ Group, p.adjust.method = "BH", detailed = F) %>%
+  add_xy_position(x = "Group") %>% 
+  mutate(p.adj.round = signif(p.adj, digits = 2))
+
+barras_lgals4 <- ggplot(data = lgals4, aes(x = Group, y = `Relative Quantity`)) +
+  geom_boxplot(aes(x = `Group`, y = `Relative Quantity`, fill = Group)) +
+  scale_fill_brewer(palette = "Set3") +
+  theme_classic(base_size = basesize) +
+  labs(title = "Expresión de Lgals4", x = "Tratamiento", y = "Cantidad relativa", fill = "Tratamiento")+
+  theme(legend.position = "none") +
+  stat_compare_means(method = "kruskal.test") +
+  stat_pvalue_manual(dunn_result, label = "p.adj.round", tip.length = 0.01)
+
+# Gen 3: Lgals12
+lgals12 <- lgals12 %>%
+  mutate(Group = factor(Group, levels = c("Control", "DSS", "AOM/DSS")))
+
+dunn_result <- lgals12 %>% 
+  dunn_test(`Relative Quantity` ~ Group, p.adjust.method = "BH", detailed = F) %>%
+  add_xy_position(x = "Group") %>% 
+  mutate(p.adj.round = signif(p.adj, digits = 2))
+
+barras_lgals12 <- ggplot(data = lgals12, aes(x = Group, y = `Relative Quantity`)) +
+  geom_boxplot(aes(x = `Group`, y = `Relative Quantity`, fill = Group)) +
+  scale_fill_brewer(palette = "Set3") +
+  theme_classic(base_size = basesize) +
+  labs(title = "Expresión de Lgals12", x = "Tratamiento", y = "Cantidad relativa", fill = "Tratamiento")+
+  theme(legend.position = "none") +
+  stat_compare_means(method = "kruskal.test") +
+  stat_pvalue_manual(dunn_result, label = "p.adj.round", tip.length = 0.01)
+
+
+# Gen 4: St3gal1
+st3gal1 <- st3gal1 %>%
+  mutate(Group = factor(Group, levels = c("Control", "DSS", "AOM/DSS")))
+
+dunn_result <- st3gal1 %>% 
+  dunn_test(`Relative Quantity` ~ Group, p.adjust.method = "BH", detailed = F) %>%
+  add_xy_position(x = "Group") %>% 
+  mutate(p.adj.round = signif(p.adj, digits = 2))
+
+barras_st3gal1 <- ggplot(data = st3gal1, aes(x = Group, y = `Relative Quantity`)) +
+  geom_boxplot(aes(x = `Group`, y = `Relative Quantity`, fill = Group)) +
+  scale_fill_brewer(palette = "Set3") +
+  theme_classic(base_size = basesize) +
+  labs(title = "Expresión de St3gal1", x = "Tratamiento", y = "Cantidad relativa", fill = "Tratamiento")+
+  theme(legend.position = "none") +
+  stat_compare_means(method = "kruskal.test") +
+  stat_pvalue_manual(dunn_result, label = "p.adj.round", tip.length = 0.01)
+
+ggarrange(barras_defa5, barras_lgals4, barras_st3gal1, barras_lgals12,
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
+
 
 # Movimiento de genes ----
 df <- data.frame(
@@ -1181,4 +1348,109 @@ ggplot(df_long, aes(x = condition, y = expression, group = group, color = group)
   theme_bw(base_size = 15) +
   theme(plot.title = element_text(hjust = 0.5),
         legend.title = element_blank(),axis.text.y = element_blank())
+
+# Conclusión: modelo
+inflamado_control <- process_data(tang.i_c, id = "Inflamado/control")
+displasia_inflamado <- process_data(tang.d_i, id = "Displasia/inflamado")
+adenocarcinoma_displasia <- process_data(tang.a_d, id = "Adenocarcinoma/displasia")
+adenocarcinoma_inflamado <- process_data(tang.a_i, id = "Adenocarcinoma/inflamado")
+
+# inflamado_control <- orthologize(inflamado_control)
+# displasia_inflamado <- orthologize(displasia_inflamado)
+# adenocarcinoma_displasia <- orthologize(adenocarcinoma_displasia)
+# adenocarcinoma_inflamado <- orthologize(adenocarcinoma_inflamado)
+
+firma_raton <- c("Defa5", "Defa29", "Defa31", "Defa39", "Slc9a3", "Lgals4", "Degs2",
+                 "Slc35g1", "Lgals12", "Hnf4a", "Slc26a2", "Sult1c2", "Icam1", "Sell",
+                 "Selp", "St3gal1", "Chi3l1", "Chil3", "Clec4e", "Gcnt2")
+
+inflamado_control.f <- inflamado_control[rownames(inflamado_control) %in% firma_raton, ] %>% rownames_to_column(var = "Gene")
+displasia_inflamado.f <- displasia_inflamado[rownames(displasia_inflamado) %in% firma_raton, ] %>% rownames_to_column(var = "Gene")
+adenocarcinoma_displasia.f <- adenocarcinoma_displasia[rownames(adenocarcinoma_displasia) %in% firma_raton, ] %>% rownames_to_column(var = "Gene")
+adenocarcinoma_inflamado.f <- adenocarcinoma_inflamado[rownames(adenocarcinoma_inflamado) %in% firma_raton, ] %>% rownames_to_column(var = "Gene")
+
+all.df <- plyr::join_all(list(inflamado_control.f, displasia_inflamado.f, adenocarcinoma_inflamado.f),
+                         by = "Gene", type = "full")
+rownames(all.df) <- all.df$Gene
+all.df <- all.df[ , -1]
+
+all_lfc <- all.df[,grep(x = colnames(all.df), pattern = "*.lfc", value = T)]
+all_lfc[is.na(all_lfc)] <- 0
+all_pval <- all.df[,grep(x = colnames(all.df), pattern = "*.adjP", value = T)]
+all_pval[is.na(all_pval)] <- ""
+
+heatmap_colors <- as.character(paletteer_c("pals::coolwarm", 100, direction = 1))
+pheatmap::pheatmap(as.matrix(all_lfc),
+                   show_rownames = T,
+                   cutree_rows = 2,
+                   treeheight_row = 0,
+                   treeheight_col = 6,
+                   color = heatmap_colors,
+                   breaks = seq(-3, 3, length.out = 101),
+                   display_numbers = as.matrix(all_pval))
+
+
+# Conclusión: humano
+firma_humano <- c("DEFA4", "DEFA5", "DEFA6", "SLC9A3", "LGALS4", "DEGS2",
+                  "SLC35G1", "LGALS12", "HNF4A", "SLC26A2", "SULT1C2", "ICAM1", "SELL",
+                  "SELP", "ST3GAL1", "CHI3L1", "CHIA", "CLEC4E", "GCNT2")
+
+uc_control <- process_data(bjerrum.uc_c, id = "uc/control")
+displasia_uc <- process_data(bjerrum.d_uc, id = "Displasia/uc")
+
+uc_control.f <- uc_control[rownames(uc_control) %in% firma_humano, ] %>% rownames_to_column(var = "Gene")
+displasia_uc.f <- displasia_uc[rownames(displasia_uc) %in% firma_humano, ] %>% rownames_to_column(var = "Gene")
+
+all.df <- plyr::join_all(list(uc_control.f, displasia_uc.f), by = "Gene", type = "full")
+rownames(all.df) <- all.df$Gene
+all.df <- all.df[ , -1]
+
+all_lfc <- all.df[,grep(x = colnames(all.df), pattern = "*.lfc", value = T)]
+all_lfc[is.na(all_lfc)] <- 0
+all_pval <- all.df[,grep(x = colnames(all.df), pattern = "*.adjP", value = T)]
+all_pval[is.na(all_pval)] <- ""
+
+heatmap_colors <- as.character(paletteer_c("pals::coolwarm", 100, direction = 1))
+pheatmap::pheatmap(as.matrix(all_lfc),
+                   show_rownames = T,
+                   cutree_rows = 3,
+                   treeheight_row = 0,
+                   treeheight_col = 6,
+                   color = heatmap_colors,
+                   breaks = seq(-2, 2, length.out = 101),
+                   display_numbers = as.matrix(all_pval))
+
+# Agudo vs crónico----
+agudo <- c("SLC35A1","ST6GALNAC2","CHI3L1","CLEC4E","ST3GAL1","PFKFB3",
+           "GALNT2","IL2RA","FUT11","ICAM2","DEGS1","SELP","SELL","SLC26A2",
+           "ICAM1", "VCAM1","CLEC7A")
+un_ciclo <- c("SELL", "SLC26A2", "ICAM1","VCAM1","CLEC7A")
+dos_ciclos <- c("SELL", "SLC26A2", "ICAM1", "VCAM1","CLEC7A")
+dos_ciclos_con_recu <- c("DEGS1", "SELP","SLC26A2","ICAM1","VCAM1","CLEC7A")
+tres_ciclos <- c("ICAM2","SELP","SLC26A2","ICAM1","VCAM1","CLEC7A")
+mi_agudo <- unique(c(agudo, un_ciclo))
+
+mi_lista <- list(agudo = mi_agudo, tres = tres_ciclos)
+
+ggvenn(mi_lista, text_size = 7)
+
+agudo_y_cronico <- intersect(mi_agudo, tres_ciclos)
+length(agudo_y_cronico)
+agudo_no_cronico <- mi_agudo[!mi_agudo %in% tres_ciclos]
+length(agudo_no_cronico)
+
+library(UpSetR)
+
+expressionInput <- c(`DSS agudo` = 9,
+                     `DSS agudo&3 ciclos DSS` = 1,
+                     `DSS agudo&2 ciclos DSS + recuperación` = 1,
+                     `DSS agudo&2 ciclos DSS + recuperación&3 ciclos DSS` = 1,
+                     `DSS agudo&1 ciclo DSS&2 ciclos DSS` = 1,
+                     `DSS agudo&1 ciclo DSS&2 ciclos DSS&2 ciclos DSS + recuperación&3 ciclos DSS` = 4)
+
+UpSetR::upset(fromExpression(expressionInput), order.by = "freq", sets.bar.color = "lightblue",
+              text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 2),
+              mainbar.y.label = "Genes por intersección",
+              sets.x.label = "Genes por modelo",
+              point.size = 3, line.size = 1)
 
