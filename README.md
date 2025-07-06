@@ -1,4 +1,4 @@
-# Tesis de Licenciatura (Lucía Castelli, 2025)
+# Tesis de Licenciatura (Lucía Castelli, 2025) — Búsqueda de una firma glicobiológica potencialmente predictiva de la transición de colitis ulcerosa a cáncer colorrectal asociado a colitis
 
 Este repositorio contiene los archivos finales (`final_outputs`) y los scripts utilizados en el análisis de expresión genética diferencial y otros análisis transcriptómicos realizados para mi tesis de licenciatura en Biotecnología.
 
